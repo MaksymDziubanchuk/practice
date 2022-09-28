@@ -1,4 +1,5 @@
 const express = require('express');
+const Joi = require('joi');
 const router = express.Router();
 
 let posts = [
@@ -22,6 +23,27 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/', (req, res) => {
+
+
+    const schema = Joi.object({
+        topic: Joi.string()
+            .alphanum()
+            .min(3)
+            .max(30)
+            .required(),
+        text: Joi.string()
+            .alphanum()
+            .min(10)
+            .max(400)
+            .required(),
+    })        
+
+    const validationResult = schema.validate(req.body);
+
+    if(validationResult.error) {
+        return  res.status(404).json({status: validationResult.error.details});
+    }
+
     const {
         topic,
         text
@@ -36,6 +58,25 @@ router.post('/', (req, res) => {
 })
 
 router.put('/:id', (req, res) => {
+    const schema = Joi.object({
+        topic: Joi.string()
+            .alphanum()
+            .min(3)
+            .max(30)
+            .required(),
+        text: Joi.string()
+            .alphanum()
+            .min(10)
+            .max(400)
+            .required(),
+    })        
+
+    const validationResult = schema.validate(req.body);
+
+    if(validationResult.error) {
+        return  res.status(404).json({status: validationResult.error.details});
+    }
+
     const id = req.params.id;
     const {
         topic,
@@ -52,6 +93,7 @@ router.put('/:id', (req, res) => {
         });
        return res.json({posts, status: 'success'});
     }
+    
     return  res.status(404).json({status: 'undefinded'});
 
 })
